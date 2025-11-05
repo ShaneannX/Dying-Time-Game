@@ -22,7 +22,7 @@ def start_menu():
     running = True
 
     while running:
-        screen.fill((30,30,30))
+        screen.fill("grey")
         title_text = font.render("Dying Time", True, (255, 255, 255))
         screen.blit(title_text, (325, 100))
         screen.blit(play_button_surface, start_button_rect)
