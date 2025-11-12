@@ -37,6 +37,7 @@ class Player(Characters):
         self.player_collision_rect.center = self.player_rect.center
         self.stop_player = False
         self.player_position = self.get_player_position()
+        
     def draw(self, surface):
         surface.blit(self.player,self.player_rect)
     
@@ -52,7 +53,7 @@ class Player(Characters):
         """
         Returns players position
         """
-        return self.player_rect.x
+        return self.player_rect
     
     def set_position(self, position_x):
         self.player_rect = self.player.get_rect(topleft = (position_x))

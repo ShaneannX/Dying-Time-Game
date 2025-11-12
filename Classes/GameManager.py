@@ -7,9 +7,9 @@ class GameManager:
         self.screens = {
             'menu': Menu((128, 128, 128)),
             'start': StartGame((255,255,255), self),
-            'game_over': GameOver(255,0,0),
-            'escaped': Escaped((0,255,0), self),
-            'unlock_door': UnlockDoor((255,255,255), self)
+            # 'game_over': GameOver(255,0,0),
+            # 'escaped': Escaped((0,255,0), self),
+            # 'unlock_door': UnlockDoor((255,255,255), self)
         }
 
         self.current_screen = self.screens["menu"]

@@ -44,14 +44,17 @@ class StartGame(BaseScreen):
         super().__init__()
         self.colour = colour
         self.manager = manager
+        # Initialises Player. 
         self.player = Player("Jessica", 24)
+        # Draws doors in each screeen. 
         self.doors = [
             Door((150,150), pygame.image.load("graphics\door\door.png").convert_alpha(), "start"),
             Door((150,150), pygame.image.load("graphics\door\door.png").convert_alpha(), "unlock_door")
             
         ]
-        self.countdown = Countdown(self.manager)
+        # self.countdown = Countdown(self.manager)
 
+    # Handles movement logic for player
     def handle_event(self, event, manager):
 
         if event.type == pygame.KEYDOWN:
@@ -59,25 +62,27 @@ class StartGame(BaseScreen):
                 self.player.advance()
 
     def update(self):
+        # Checks each door if the player collides with it. Stops players movement if True. Let's player move if D key is pressed if False.
         for door in self.doors:
             if door.stops_player(self.player.player_collision_rect):
                 self.player.stop()
             elif not door.is_locked and not door.stops_player(self.player.player_collision_rect):
-                self.player.advance()
+                self.handle_event()
 
             if door.is_locked and door.stops_player(self.player.player_collision_rect):
                 print("swtich screen!!!!!")
                 print(door.target_screen)
-                self.manager.switch_screen(door.target_screen)
+                # self.manager.switch_screen(door.target_screen)
             
-            self.time_ran_out(self.manager, self.countdown.check_time())
+            # self.time_ran_out(self.manager, self.countdown.check_time())
 
+    # Draws player onto screen. 
     def draw(self, surface):
         surface.fill(self.colour)
         for door in self.doors:
             door.draw(surface)
         self.player.draw(surface)
-        self.countdown.draw(surface)
+        # self.countdown.draw(surface)
                         
 
 class UnlockDoor(StartGame):
@@ -123,7 +128,7 @@ class UnlockDoor(StartGame):
         self.textbox_colour = self.colour_active if self.active else self.colour_passive
 
     def draw(self, surface):
-        super().draw(surface)
+        # super().draw(surface)
         surface.blit(self.question_text, (250, 100))
         self.hunter.draw(surface)
         pygame.draw.rect(surface, self.textbox_colour, self.input_rect)
