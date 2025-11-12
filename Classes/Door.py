@@ -7,7 +7,6 @@ class Door:
         self.collision_rect = pygame.Rect(0, 0, 20, 90)
         self.collision_rect.center = self.door_rect.center
         self.target_screen = target_screen
-        # self.collided = False
         self.is_locked = is_locked
 
     # Method that returns a boolean to check if door is locked and player is trying to walk through it. 
@@ -25,6 +24,11 @@ class Door:
 
     def reset(self):
         self.is_locked = True
-        self.collided = False
+
+class SafeZone(Door):
+    def __init__(self, position, image, target_screen, is_locked=False):
+        super().__init__(position, image, target_screen, is_locked=is_locked)
+
+
             
     
