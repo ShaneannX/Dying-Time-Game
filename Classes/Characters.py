@@ -60,29 +60,30 @@ class Player(Characters):
 
 
 class Hunter(Characters):
-    def __init__(self, name, age, player_pos):
+    def __init__(self, name, age):
         super().__init__(name=None, age=None)
-        self.player_pos = player_pos
         self.name = name
         self.age = age
         self.hunter = pygame.image.load('graphics\Hunter\hunter_static.png').convert_alpha()
         self.hunter = pygame.transform.scale(self.hunter, self.DEFAULT_IMAGE_SIZE)
-        self.position = self.hunter.get_rect(topleft = (self.player_pos - 60, 200))
+        self.position = self.hunter.get_rect(topleft = (0, 200))
         self.hunter_collision_rect = pygame.Rect(0, 0,50,50)
         self.hunter_collision_rect.center = self.position.center
 
     def draw(self, surface):
-        # print(self.position)
         surface.blit(self.hunter,self.position)
         self.hunter_collision_rect.center = self.position.center
     
-    def captured_player(self):
-        return self.player.player_collision_rect.colliderect(self.hunter_collision_rect)
+    def captured_player(self, player_pos):
+        return self.hunter_collision_rect.colliderect(player_pos)
+    
+    def start_position(self, player_pos):
+        self.position.x = player_pos.x - 150
 
     def advance_to_player(self):
-        self.position.x += 500 * self.delta_time
+        self.position.x += 300 * self.delta_time
 
     def reset(self):
-        self.position.x = self.player_pos - 30
+        self.position.x = 0
         self.hunter_collision_rect.center = self.position.center
 

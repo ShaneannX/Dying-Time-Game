@@ -36,6 +36,7 @@ class Menu(BaseScreen):
     def handle_event(self, event, manager):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.start_button_rect.collidepoint(event.pos):
+                manager.reset_game()
                 manager.switch_screen("start")
 
 
@@ -103,19 +104,23 @@ class UnlockDoor(BaseScreen):
         self.question_text = self.base_font.render(self.questions.get_question(question_number), True, (255, 255, 255))
         self.answer = self.user_input
         self.manager = manager
+        self.first_initalised = True
+
     def update(self):
         if len(self.answer) > 0:
             if self.questions.check_answer(self.question_number, self.answer):
                 # Unlock door to 'start' screen
                 for door in self.doors:
-                    print(door.target_screen)
                     door.unlock()
-                    print(door.is_locked)
                 self.answer = ''
+                self.first_initalised = True
                 self.manager.switch_screen("start")
             else:
                 self.hunter.advance_to_player()
                 self.answer = ''
+
+        if self.hunter.captured_player(self.player.player_collision_rect):
+            self.manager.switch_screen("game_over")
     
 
     def handle_event(self, event, manager):
@@ -135,8 +140,15 @@ class UnlockDoor(BaseScreen):
         self.textbox_colour = self.colour_active if self.active else self.colour_passive
 
     def draw(self, surface):
-        surface.blit(self.question_text, (250, 100))
+        if self.first_initalised:
+            self.hunter.start_position(self.player.position)
+            self.first_initalised = False
+        surface.fill((255,0,0))
+        for door in self.doors:
+            door.draw(surface)
+        self.player.draw(surface)
         self.hunter.draw(surface)
+        surface.blit(self.question_text, (250, 100))
         pygame.draw.rect(surface, self.textbox_colour, self.input_rect)
         text_surface = self.base_font.render(self.user_input, True, (255, 255, 255))
         surface.blit(text_surface, (self.input_rect.x + 5, self.input_rect.y + 5))
@@ -154,19 +166,20 @@ class GameOver(BaseScreen):
             self.restart_text = self.font.render("Press ENTER to play again or SPACE to return to main menu", True, (255, 255, 255))
         else:
             self.restart_text = restart_text
+        self.restart_text = self.font.render("Press ENTER to play again or SPACE to return to main menu", True, (255, 255, 255))
         self.manager = manager
 
         if colour is None:
-            self.change_bg_colour((255,0,0))
+            self.colour = (255,0,0)
         else:
-            self.change_bg_colour(colour)
+            self.colour = colour
         
         self.manager = manager
     def update(self):
         pass
 
     def draw(self,surface):
-        # surface.fill(self.colour)
+        surface.fill((255,0,0))
         surface.blit(self.title_text, (425, 150))
         surface.blit(self.restart_text, (50, 400))
 
@@ -179,7 +192,6 @@ class GameOver(BaseScreen):
                 manager.reset_game()
                 manager.switch_screen('start')
             elif event.key == pygame.K_SPACE:
-                manager.reset_game()
                 manager.switch_screen('menu')
 
 

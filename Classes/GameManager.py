@@ -9,7 +9,7 @@ class GameManager:
 
         # Set up classes
         self.player = Player("Player 1", 20)
-        self.hunter = Hunter("Unknow", 28, self.player.get_player_position())
+        self.hunter = Hunter("Unknown", 28)
         self.doors = [
             Door((150,150), pygame.image.load("graphics\door\door.png").convert_alpha(), "start"),
             Door((150,150), pygame.image.load("graphics\door\door.png").convert_alpha(), "unlock_door"),
@@ -26,7 +26,6 @@ class GameManager:
         }
 
         self.current_screen = self.screens["menu"]
-        self.countdown = Countdown(self)
 
     def reset_game(self):
         print("Resetting game!")
@@ -34,6 +33,7 @@ class GameManager:
         self.hunter.reset()
         for door in self.doors:
             door.reset()
+        self.countdown.reset()
 
     def switch_screen(self, name):
         self.current_screen = self.screens[name]
@@ -47,11 +47,12 @@ class GameManager:
                     exit()
 
                 self.current_screen.handle_event(event, self)
-            # self.screen.fill(self.get_background())
-            self.countdown.tick()
-            self.countdown.draw(self.screen)
+
             self.current_screen.update()
             self.current_screen.draw(self.screen)
+            if not isinstance(self.current_screen, (Menu, GameOver, Escaped)):
+                self.countdown.tick()
+                self.countdown.draw(self.screen)
             pygame.display.flip()
             Clock.tick(60)
 
