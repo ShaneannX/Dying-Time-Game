@@ -3,6 +3,7 @@ from Classes.Screen import BaseScreen, StartGame, Menu, UnlockDoor, Escaped, Gam
 from Classes.Characters import Player, Hunter
 from Classes.Door import Door, SafeZone
 from Classes.Time import Countdown
+import random
 class GameManager:
     def __init__(self):
         self.screen = pygame.display.set_mode((1000, 600))
@@ -16,13 +17,14 @@ class GameManager:
             SafeZone((500,150), pygame.image.load("graphics\door\safezone.png").convert_alpha(), "start"),
         ]
         self.countdown = Countdown(self)
-
+        # To randomise the questions
+        self.question_number = random.randint(0, 2)
         self.screens = {
             'menu': Menu((128, 128, 128)),
             'start': StartGame(self.player, self.doors, (255,255,255), self),
             'game_over': GameOver(255,0,0),
             'escaped': Escaped((0,255,0), self),
-            'unlock_door': UnlockDoor(self.hunter,self.player,self.doors,self, 1)
+            'unlock_door': UnlockDoor(self.hunter,self.player,self.doors,self, self.question_number)
         }
 
         self.current_screen = self.screens["menu"]
