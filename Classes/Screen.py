@@ -59,15 +59,13 @@ class StartGame(BaseScreen):
 
     # Update method for conditional checks and screen management. 
     def update(self):
+        
         for door in self.doors:
             # Checks each door if the player collision rect collides with the door with it.
             if door.stops_player(self.player.player_collision_rect):
                 # Stop player from moving forward showing the door is locked.
                 self.player.stop()
-            # Otherwise checks if door is not locked and player is colliding with the door then unlock_door method of player is called.
-            elif not door.is_locked and door.stops_player(self.player.player_collision_rect):
-                # Player method that allows the player to move again when the d key is pressed.
-                self.player.unlocked_door()
+
             # Condition to check if door is locked and player is colliding with the door.
             if door.is_locked and door.stops_player(self.player.player_collision_rect):
                 # Call game manager method to switch screen for player to try and unlock the door.
@@ -128,6 +126,8 @@ class UnlockDoor(BaseScreen):
                 self.answer = self.user_input
                 # Sets state back to True for the next door or when game restarts.
                 self.first_initalised = True
+                # Invokes player method to allow player movement again.
+                self.player.unlocked_door()
                 # countdown class method is invoked to add 10 seconds to the timer.
                 self.countdown.add_time(10)
                 # Game manager method is invoked to switch back to the game screen. 

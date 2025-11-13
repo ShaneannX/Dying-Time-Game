@@ -37,6 +37,7 @@ class Player(Characters):
         self.player_collision_rect.center = self.position.center
         # Condition check for the players ability to move or not.
         self.stop_player = False
+
     # Method to draw player onto the screen
     def draw(self, surface):
         surface.blit(self.player,self.position)
@@ -96,7 +97,7 @@ class Hunter(Characters):
         self.position.x = player_pos.x - 150
     # Hunters movement towards the player
     def advance_to_player(self):
-        self.position.x += 300 * self.delta_time
+        self.position.x += 1000 * self.delta_time
     # Resets hunter to its inital states.
     def reset(self):
         self.position.x = 0
