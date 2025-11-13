@@ -75,13 +75,14 @@ class StartGame(BaseScreen):
     def update(self):
         
         for door in self.doors:
+            is_door_locked = door.get_door_state()
             # Checks each door if the player collision rect collides with the door with it.
             if door.stops_player(self.player.collision_rect):
                 # Stop player from moving forward showing the door is locked.
                 self.player.stop()
 
             # Condition to check if door is locked and player is colliding with the door.
-            if door.is_locked and door.stops_player(self.player.collision_rect):
+            if is_door_locked and door.stops_player(self.player.collision_rect):
                 # Call game manager method to switch screen for player to try and unlock the door.
                 self.manager.switch_screen("unlock_door")
         # Condition to check if player reached safezone

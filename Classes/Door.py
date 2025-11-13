@@ -23,19 +23,19 @@ class DoorInterface(ABC):
         pass
 class AbstractDoor(ABC):
     def __init__(self, is_locked=True):
-        self.is_locked = is_locked
+        self.__is_locked = is_locked
 
     def lock(self):
-        self.is_locked = True
+        self.__is_locked = True
     
     def unlock(self):
-        self.is_locked = False
+        self.__is_locked = False
 
     def get_door_state(self):
-        return self.is_locked
+        return self.__is_locked
     
     def reset(self):
-        self.is_locked = True
+        self.__is_locked = True
 
     @abstractmethod
     def draw(self, surface):
@@ -43,6 +43,7 @@ class AbstractDoor(ABC):
         
 class Door(AbstractDoor):
     def __init__(self, position : tuple, image : str, target_screen : str, is_locked = True):
+        
         """
         Creates Door object
         position -  Where to place the object
@@ -59,7 +60,8 @@ class Door(AbstractDoor):
 
     # Method that returns a boolean to check if door is locked and player is trying to walk through it. 
     def stops_player(self, player_position : object):
-        return self.is_locked and self.collision_rect.colliderect(player_position)
+        is_locked = self.get_door_state()
+        return is_locked and self.collision_rect.colliderect(player_position)
     
     # Method to return a boolean if there is a collision with the player and the door
     def check_collision(self, player_position):

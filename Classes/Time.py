@@ -1,7 +1,21 @@
 import pygame
+from abc import ABC, abstractmethod
+
+class CountdownInterface(ABC):
+    @abstractmethod
+    def draw(self, surface):
+        pass
+
+    @abstractmethod
+    def reset(self):
+        pass
+
+    @abstractmethod
+    def tick(self):
+        pass
 
 
-class Countdown:
+class Countdown(CountdownInterface):
     """
     manager - GameManager class
     """
