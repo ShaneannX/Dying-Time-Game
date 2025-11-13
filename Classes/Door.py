@@ -1,5 +1,47 @@
 import pygame
-class Door:
+from abc import ABC, abstractmethod
+
+class DoorInterface(ABC):
+    @abstractmethod
+    def lock(self):
+        pass
+
+    @abstractmethod
+    def unlock(self):
+        pass
+
+    @abstractmethod
+    def draw(self, surface : object):
+        pass
+
+    @abstractmethod
+    def get_door_state(self):
+        pass
+
+    @abstractmethod
+    def reset(self): 
+        pass
+class AbstractDoor(ABC):
+    def __init__(self, is_locked=True):
+        self.is_locked = is_locked
+
+    def lock(self):
+        self.is_locked = True
+    
+    def unlock(self):
+        self.is_locked = False
+
+    def get_door_state(self):
+        return self.is_locked
+    
+    def reset(self):
+        self.is_locked = True
+
+    @abstractmethod
+    def draw(self, surface):
+        pass
+        
+class Door(AbstractDoor):
     def __init__(self, position : tuple, image : str, target_screen : str, is_locked = True):
         """
         Creates Door object
@@ -14,7 +56,6 @@ class Door:
         self.collision_rect = pygame.Rect(0, 0, 20, 90)
         self.collision_rect.center = self.door_rect.center
         self.target_screen = target_screen
-        self.is_locked = is_locked
 
     # Method that returns a boolean to check if door is locked and player is trying to walk through it. 
     def stops_player(self, player_position : object):
@@ -26,13 +67,6 @@ class Door:
     # Draws the door on the screen
     def draw(self, surface : object):
         surface.blit(self.door, self.door_rect)
-
-    # Method to unlock the door
-    def unlock(self):
-        self.is_locked = False
-    # Method to reset the door to its inital state.
-    def reset(self):
-        self.is_locked = True
 
 # Subclass of door, inheriting the parent class but overriding the is_lock attribute o False
 class SafeZone(Door):

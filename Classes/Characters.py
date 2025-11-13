@@ -1,6 +1,23 @@
 import pygame
-# Parent class for reusability 
-class Characters:
+from abc import ABC, abstractmethod
+
+#Characters Interface as a pure contract
+
+class CharacterInterface(ABC):
+    @abstractmethod
+    def draw(self, surface : object):
+        pass
+
+    @abstractmethod
+    def move(self):
+        pass
+
+    @abstractmethod
+    def reset(self):
+        pass
+
+
+class AbstractCharacters(CharacterInterface):
     def __init__(self, name=None, age=None):
         # Conditions if attributes needs to be overriden
         if name is None: 
@@ -19,10 +36,46 @@ class Characters:
         self.DEFAULT_IMAGE_SIZE = (100,100)
         # Characters positions
         self.inital_position = (0,200)
-        self.position = self.inital_position
+        self.position = pygame.Rect(0,200,50,50)
+        self.collision_rect = pygame.Rect(0,0,50,50)
+        self.collision_rect.center = self.position.center
+        self.stop_player = False
+
+    # Methods to pass to subclasses
+    def move(self):
+        if self.stop_player == False:
+            self.position.x += 1000 * self.delta_time
+            self.collision_rect.center = self.position.center
+
+    # Retrieves the players position.
+    def get_player_position(self):
+        """
+        Returns players position
+        """
+        return self.position.x
+    
+    # Stops player from moving
+    def stop(self):
+        self.stop_player = True
+
+    # Method to unlock door which allows the player to move again. 
+    def unlocked_door(self):
+        self.stop_player = False
+
+    # Abstract methods that subclasses must have. 
+    @abstractmethod
+    def draw(self, surface):
+        pass
+
+    @abstractmethod
+    def reset(self):
+        pass
+
+
+
 
 # Subclass of Characters.
-class Player(Characters):
+class Player(AbstractCharacters):
     def __init__(self, name : str, age: int):
         super().__init__(name=None, age=None)
         # Overides parent attribue
@@ -32,47 +85,24 @@ class Player(Characters):
         self.player = pygame.image.load('graphics\Player\player_static.png').convert_alpha()
         self.player = pygame.transform.scale(self.player, self.DEFAULT_IMAGE_SIZE)
         self.position = self.player.get_rect(topleft = self.inital_position)
-        # Hitbox for the player that is more accurate then the players position.
-        self.player_collision_rect = pygame.Rect(0, 0, 50, 50)
-        self.player_collision_rect.center = self.position.center
-        # Condition check for the players ability to move or not.
-        self.stop_player = False
 
     # Method to draw player onto the screen
     def draw(self, surface : object):
         surface.blit(self.player,self.position)
+        self.collision_rect.center = self.position.center
 
-    # Moves player to the right is self.stop_player is False
-    def advance(self):
-        if self.stop_player == False:
-            self.position.x += 1000 * self.delta_time
-            self.player_collision_rect.center = self.position.center
-    # Stops player from moving
-    def stop(self):
-        self.stop_player = True
-    # Method to unlock door which allows the player to move again. 
-    def unlocked_door(self):
-        self.stop_player = False
-    # Retrieves the players position.
-    def get_player_position(self):
-        """
-        Returns players position
-        """
-        return self.position.x
-    
-    # Allows to set the players position.
+     # Allows to set the players position.
     def set_position(self, position_x):
         self.position = self.player.get_rect(topleft = (position_x))
 
     # Resets the class to its inital states.
     def reset(self):
         self.position = self.player.get_rect(topleft=self.inital_position)
-        self.player_collision_rect.center = self.position.center
+        self.collision_rect.center = self.position.center
         self.stop_player = False
 
-
 # Subclass of Characters
-class Hunter(Characters):
+class Hunter(AbstractCharacters):
     def __init__(self, name : str, age : int):
         super().__init__(name=None, age=None)
         # Overides parent attribue
@@ -82,24 +112,19 @@ class Hunter(Characters):
         self.hunter = pygame.image.load('graphics\Hunter\hunter_static.png').convert_alpha()
         self.hunter = pygame.transform.scale(self.hunter, self.DEFAULT_IMAGE_SIZE)
         self.position = self.hunter.get_rect(topleft = (0, 200))
-        # Sets up hunters hitbox
-        self.hunter_collision_rect = pygame.Rect(0, 0,50,50)
-        self.hunter_collision_rect.center = self.position.center
+
     # Displays hunter on the screen
     def draw(self, surface: object):
         surface.blit(self.hunter,self.position)
-        self.hunter_collision_rect.center = self.position.center
+        self.collision_rect.center = self.position.center
     # Returns a boolean if hunter has captured player.
     def captured_player(self, player_pos):
-        return self.hunter_collision_rect.colliderect(player_pos)
+        return self.collision_rect.colliderect(player_pos)
     # Sets up hunters position to be a certain distance from the player when initalised.
     def start_position(self, player_pos : object):
         self.position.x = player_pos.x - 150
-    # Hunters movement towards the player
-    def advance_to_player(self):
-        self.position.x += 1000 * self.delta_time
-    # Resets hunter to its inital states.
+    # Reset Hunter class to its inital states. 
     def reset(self):
         self.position.x = 0
-        self.hunter_collision_rect.center = self.position.center
+        self.collision_rect.center = self.position.center
 

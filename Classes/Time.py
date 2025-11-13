@@ -12,7 +12,7 @@ class Countdown:
         # gets inital timer for when game starts
         self.start_timer = pygame.time.get_ticks()
         # Time player gets in miliseconds
-        self.duration = 10000
+        self.duration = 20000
         # Time from game started
         self.elapsed_time = pygame.time.get_ticks() - self.start_timer
         # Countdown time in seconds.
@@ -53,7 +53,7 @@ class Countdown:
     def reset(self):
         self.start_timer = pygame.time.get_ticks()
         self.elapsed_time = pygame.time.get_ticks() - self.start_timer
-        self.duration = 10000
+        self.duration = 20000
         self.countdown = (self.duration - self.elapsed_time) / 1000
 
 

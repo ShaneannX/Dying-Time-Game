@@ -1,14 +1,28 @@
 import pygame
 from Classes.Characters import Player, Hunter
 from Classes.Door import Door
-from Classes.Questions import Questions
+from Classes.Questions import TriviaQuestions
 from Classes.Time import Countdown
-
+from abc import ABC, abstractmethod
+import random
 # Parent class for screen customisation
-class BaseScreen:
+
+class BaseScreen(ABC):
     def __init__(self):
         self.font = pygame.font.Font('font/Pixeltype.ttf',50)
         pygame.display.set_caption("Dying Time")
+
+    @abstractmethod
+    def draw(self,surface : object):
+        pass
+
+    @abstractmethod
+    def update(self):
+        pass
+
+    @abstractmethod
+    def handle_event(self, event : object, manager :object):
+        pass
 
 # Inherits BaseScreen for attribute
 class Menu(BaseScreen):
@@ -55,23 +69,23 @@ class StartGame(BaseScreen):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d:
                 # Only when 'd' key is pressed the player will move to the right
-                self.player.advance()
+                self.player.move()
 
     # Update method for conditional checks and screen management. 
     def update(self):
         
         for door in self.doors:
             # Checks each door if the player collision rect collides with the door with it.
-            if door.stops_player(self.player.player_collision_rect):
+            if door.stops_player(self.player.collision_rect):
                 # Stop player from moving forward showing the door is locked.
                 self.player.stop()
 
             # Condition to check if door is locked and player is colliding with the door.
-            if door.is_locked and door.stops_player(self.player.player_collision_rect):
+            if door.is_locked and door.stops_player(self.player.collision_rect):
                 # Call game manager method to switch screen for player to try and unlock the door.
                 self.manager.switch_screen("unlock_door")
         # Condition to check if player reached safezone
-        if self.safezone.check_collision(self.player.player_collision_rect):
+        if self.safezone.check_collision(self.player.collision_rect):
             # Call game manager method to switch to winner screen. 
             self.manager.switch_screen("escaped")
 
@@ -84,17 +98,15 @@ class StartGame(BaseScreen):
                         
 # Inherits from BaseScreen for attributes
 class UnlockDoor(BaseScreen):
-    def __init__(self, hunter : object ,player : object, doors : object, manager : object, question_number : int, countdown : object):
+    def __init__(self, hunter : object ,player : object, doors : object, manager : object, countdown : object):
         super().__init__()
         # Retrieves initalised classes passed in from arguments. 
         self.player= player
         self.hunter = hunter
         self.doors = doors
         self.countdown = countdown
-        self.question_number = question_number
-
-        # Initalise the Questions class
-        self.questions = Questions()
+        self.questions = TriviaQuestions()
+        self.question_number = random.randint(0, 4)
         # Sets user input, input box, question with customisations
         self.user_input = ''
         self.input_rect = pygame.Rect(350,150,140,32)
@@ -102,9 +114,8 @@ class UnlockDoor(BaseScreen):
         self.colour_passive = pygame.Color('chartreuse4')
         self.textbox_colour = self.colour_passive
         self.base_font = pygame.font.Font(None, 32)
-        self.question_number = question_number
-        self.question_text = self.base_font.render(self.questions.get_question(self.question_number), True, (255, 255, 255))
         self.active = False
+        self.question_text = self.base_font.render(self.questions.get_question(self.question_number), True, (255, 255, 255))
         # Sets answer to inital user input
         self.answer = self.user_input
         # initalise game manager from the argument.
@@ -114,6 +125,7 @@ class UnlockDoor(BaseScreen):
 
     # Method to check whilst game is running.
     def update(self):
+        self.question_text = self.base_font.render(self.questions.get_question(self.question_number), True, (255, 255, 255))
         # Only runs if answer is given
         if len(self.answer) > 0:
             # Method from questions class to check if answer is correct. 
@@ -130,16 +142,19 @@ class UnlockDoor(BaseScreen):
                 self.player.unlocked_door()
                 # countdown class method is invoked to add 10 seconds to the timer.
                 self.countdown.add_time(10)
-                # Game manager method is invoked to switch back to the game screen. 
+                # Game manager method is invoked to switch back to the game screen.
+                self.question_number = random.randint(0, 4)
                 self.manager.switch_screen("start")
             else:
                 # If answer is incorrect, the hunter will move closer to the player. 
-                self.hunter.advance_to_player()
+                self.hunter.move()
                 # Answer is returned to inital state. 
                 self.answer = self.user_input
         # Checks if hunter has collided with the player
-        if self.hunter.captured_player(self.player.player_collision_rect):
-            # If true then manager method is invoked to change to game over screen. 
+        if self.hunter.captured_player(self.player.collision_rect):
+            # If true then manager method is invoked to change to game over screen.
+            self.user_input = '' 
+            self.question_number = random.randint(0, 4)
             self.manager.switch_screen("game_over")
     
     # Handles if certain events happens whilst the game is running. 

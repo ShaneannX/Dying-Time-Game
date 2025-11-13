@@ -18,7 +18,6 @@ class GameManager:
         ]
         self.countdown = Countdown(self)
         # To randomise the questions
-        self.question_number = random.randint(0, 2)
 
         # Set up relative screens by initalising the screen classes
         self.screens = {
@@ -26,7 +25,7 @@ class GameManager:
             'start': StartGame(self.player, self.doors, (255,255,255), self),
             'game_over': GameOver(255,0,0),
             'escaped': Escaped((0,255,0), self),
-            'unlock_door': UnlockDoor(self.hunter,self.player,self.doors,self, self.question_number, self.countdown)
+            'unlock_door': UnlockDoor(self.hunter,self.player,self.doors,self, self.countdown)
         }
 
         # Makes sure to start off with the Menu screen
