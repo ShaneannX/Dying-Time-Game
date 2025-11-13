@@ -12,7 +12,7 @@ class BaseScreen:
 
 # Inherits BaseScreen for attribute
 class Menu(BaseScreen):
-    def __init__(self,colour):
+    def __init__(self,colour : tuple):
         super().__init__()
         # For background colour
         self.colour = colour
@@ -22,7 +22,7 @@ class Menu(BaseScreen):
         # Game title to display on screen
         self.title_text = self.font.render("Dying Time", True, (0, 0, 0))
     # Displays on screen method.
-    def draw(self, surface):
+    def draw(self, surface : object):
         surface.fill(self.colour)
         surface.blit(self.title_text, (425, 150))
         surface.blit(self.play_button_surface, self.start_button_rect)
@@ -30,7 +30,7 @@ class Menu(BaseScreen):
     def update(self):
         pass
     # To handle event for when the player presses the Start button
-    def handle_event(self, event, manager):
+    def handle_event(self, event : object, manager : object):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.start_button_rect.collidepoint(event.pos):
                 # Calls game manager method to reset the game
@@ -40,7 +40,7 @@ class Menu(BaseScreen):
 
 # Inherits BaseScreen for attributes
 class StartGame(BaseScreen):
-    def __init__(self, player, doors, colour, manager):
+    def __init__(self, player : object, doors : object, colour : tuple, manager : object):
         super().__init__()
         # Sgets player and door, colour, safezone and game manager from arguments.
         self.player = player
@@ -50,7 +50,7 @@ class StartGame(BaseScreen):
         self.safezone = self.doors[2]
 
     # Handles movement logic for player
-    def handle_event(self, event, manager):
+    def handle_event(self, event : object, manager : object):
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d:
@@ -84,7 +84,7 @@ class StartGame(BaseScreen):
                         
 # Inherits from BaseScreen for attributes
 class UnlockDoor(BaseScreen):
-    def __init__(self, hunter,player, doors, manager, question_number, countdown):
+    def __init__(self, hunter : object ,player : object, doors : object, manager : object, question_number : int, countdown : object):
         super().__init__()
         # Retrieves initalised classes passed in from arguments. 
         self.player= player
@@ -143,7 +143,7 @@ class UnlockDoor(BaseScreen):
             self.manager.switch_screen("game_over")
     
     # Handles if certain events happens whilst the game is running. 
-    def handle_event(self, event, manager):
+    def handle_event(self, event : object, manager : object):
         # Checks if players mouse clicked on the input text box.
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Set self.active to True or False.
@@ -164,7 +164,7 @@ class UnlockDoor(BaseScreen):
         # Assigns textbox_colour to the respective colour if active is true or false.
         self.textbox_colour = self.colour_active if self.active else self.colour_passive
     # Method to draw the hunter to the screen.
-    def draw(self, surface):
+    def draw(self, surface : object):
         # Condition so that hunter is drawn correctly.
         if self.first_initalised:
             # Invoke hunter method to get starting position
@@ -188,7 +188,7 @@ class UnlockDoor(BaseScreen):
 
 # Inherits from BaseScreen for attributes. Also Escaped will be a subclass of this.
 class GameOver(BaseScreen):
-    def __init__(self, manager, colour=None, restart_text = None, title_text=None):
+    def __init__(self, manager : object, colour=None, restart_text = None, title_text=None):
         super().__init__()
         # Allows to override attributes of parent class. 
         # If None then assigns the defaults.
@@ -214,7 +214,7 @@ class GameOver(BaseScreen):
         pass
     
     # Method to display onto screen.
-    def draw(self,surface):
+    def draw(self,surface : object):
         # Draws the background to remove previous drawings - Don't want to show the countdown, player, doors or hunter when on this screen. 
         surface.fill((255,0,0))
         # Draws game over text and information how to restart/ return to main menu
@@ -222,7 +222,7 @@ class GameOver(BaseScreen):
         surface.blit(self.restart_text, (50, 400))
 
     # To handle events when game is running on this screen.
-    def handle_event(self, event, manager):
+    def handle_event(self, event : object, manager: object):
         if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
@@ -238,7 +238,7 @@ class GameOver(BaseScreen):
 
 # Subclass that inherits GameOver for attributes and methods. 
 class Escaped(GameOver):
-    def __init__(self, colour, manager):
+    def __init__(self, colour : tuple, manager : object):
         super().__init__(manager, colour=None, title_text=None, restart_text=None)
         # Overrides the parents colour, title_text and restart_text.
         self.title_text = self.font.render("WINNER!", True, (255, 255, 255))

@@ -5,7 +5,7 @@ class Countdown:
     """
     manager - GameManager class
     """
-    def __init__(self,manager):
+    def __init__(self,manager : object):
         self.manager = manager
 
         # Gets countdown time information
@@ -40,7 +40,7 @@ class Countdown:
             self.countdown_text = self.font.render(str(self.countdown), True, self.countdown_text_colour)
 
     # Method to add time to countdown when player unlocks the door
-    def add_time(self, time):
+    def add_time(self, time : str):
         # Need to convert the time in miliseconds
         self.duration += time * 1000
     # Checks if time has ran out, True if it has, False if not.

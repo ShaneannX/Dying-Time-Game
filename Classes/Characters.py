@@ -39,7 +39,7 @@ class Player(Characters):
         self.stop_player = False
 
     # Method to draw player onto the screen
-    def draw(self, surface):
+    def draw(self, surface : object):
         surface.blit(self.player,self.position)
 
     # Moves player to the right is self.stop_player is False
@@ -73,7 +73,7 @@ class Player(Characters):
 
 # Subclass of Characters
 class Hunter(Characters):
-    def __init__(self, name, age):
+    def __init__(self, name : str, age : int):
         super().__init__(name=None, age=None)
         # Overides parent attribue
         self.name = name
@@ -86,14 +86,14 @@ class Hunter(Characters):
         self.hunter_collision_rect = pygame.Rect(0, 0,50,50)
         self.hunter_collision_rect.center = self.position.center
     # Displays hunter on the screen
-    def draw(self, surface):
+    def draw(self, surface: object):
         surface.blit(self.hunter,self.position)
         self.hunter_collision_rect.center = self.position.center
     # Returns a boolean if hunter has captured player.
     def captured_player(self, player_pos):
         return self.hunter_collision_rect.colliderect(player_pos)
     # Sets up hunters position to be a certain distance from the player when initalised.
-    def start_position(self, player_pos):
+    def start_position(self, player_pos : object):
         self.position.x = player_pos.x - 150
     # Hunters movement towards the player
     def advance_to_player(self):
